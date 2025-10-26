@@ -1,6 +1,5 @@
 substitutions:
-  device_suffix: "1"
-  devicename: "nous-smartplug-${device_suffix}"
+  name: "nous-smartplug-a1t"
   friendly_name: "NOUS A1T"
   room: ""
   device_description: "nous a1t"
@@ -19,7 +18,7 @@ substitutions:
   ipv6_enable: "false"
 
 esphome:
-  name: ${devicename}
+  name: ${name}
   friendly_name: ${friendly_name}
   comment: "${device_description}"
   area: "${room}"  
@@ -28,8 +27,7 @@ esphome:
   project:
     name: ${project_name}
     version: ${project_version}
-  build_path: build/nous-a1t
-  
+
 esp8266:
   board: esp8285
   restore_from_flash: true
@@ -183,4 +181,3 @@ time:
     update_interval: ${sntp_update_interval}
     servers: 
       - "${sntp_server_1}"
-
