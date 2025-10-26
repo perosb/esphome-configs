@@ -1,6 +1,6 @@
 substitutions:
   device_suffix: "1"
-  devicename: "nous-a1t-${device_suffix}"
+  devicename: "nous-smartplug-${device_suffix}"
   friendly_name: "NOUS A1T"
   room: ""
   device_description: "nous a1t"
