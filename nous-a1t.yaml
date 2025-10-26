@@ -28,7 +28,8 @@ esphome:
   project:
     name: ${project_name}
     version: ${project_version}
-
+  build_path: build/nous-a1t
+  
 esp8266:
   board: esp8285
   restore_from_flash: true
