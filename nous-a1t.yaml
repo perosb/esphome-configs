@@ -1,9 +1,12 @@
 substitutions:
-  devicename: "nous-a1t"
+  device_suffix: "1"
+  devicename: "nous-a1t-${device_suffix}"
   friendly_name: "NOUS A1T"
   room: ""
   device_description: "nous a1t"
   dns_domain: ".local"
+  project_name: "NOUS Technologies.NOUS A1T"
+  project_version: "v1.0.1"  
   # info for calibration: https://esphome.io/components/sensor/hlw8012.html#calibration
   voltage_div: "726.7753444587078"
   current_res: "0.0029369706978319784"
@@ -23,8 +26,8 @@ esphome:
   min_version: 2024.6.0
   name_add_mac_suffix: false
   project:
-    name: esphome.web
-    version: dev
+    name: ${project_name}
+    version: ${project_version}
 
 esp8266:
   board: esp8285
