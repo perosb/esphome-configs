@@ -1,6 +1,8 @@
 substitutions:
-  devicenumber: "1"
-  devicename: "nous-a1t-${devicenumber}"
+  devicename: "nous-a1t"
+  friendly_name: "NOUS A1T"
+  room: ""
+  device_description: "nous a1t"
   dns_domain: ".local"
   # info for calibration: https://esphome.io/components/sensor/hlw8012.html#calibration
   voltage_div: "726.7753444587078"
@@ -15,7 +17,9 @@ substitutions:
 
 esphome:
   name: ${devicename}
-  friendly_name: ${devicename}
+  friendly_name: ${friendly_name}
+  comment: "${device_description}"
+  area: "${room}"  
   min_version: 2024.6.0
   name_add_mac_suffix: false
   project:
