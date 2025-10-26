@@ -1,0 +1,191 @@
+substitutions:
+  devicenumber: "1"
+  devicename: "nous-a1t-${devicenumber}"
+  dns_domain: ".local"
+  # info for calibration: https://esphome.io/components/sensor/hlw8012.html#calibration
+  voltage_div: "726.7753444587078"
+  current_res: "0.0029369706978319784"
+  current_multiply: "3.16789933141846"
+  sntp_update_interval: "6h"
+  sntp_server_1: "time.cloudflare.com"
+  timezone: ""
+  wifi_fast_connect: "false"
+  log_level: "INFO"
+  ipv6_enable: "false"
+
+esphome:
+  name: ${devicename}
+  friendly_name: ${devicename}
+  min_version: 2024.6.0
+  name_add_mac_suffix: false
+  project:
+    name: esphome.web
+    version: dev
+
+esp8266:
+  board: esp8285
+  restore_from_flash: true
+  early_pin_init: False
+
+logger:
+  level: ${log_level}
+
+api:
+
+ota:
+  - platform: esphome
+
+improv_serial:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  domain: "${dns_domain}"
+  fast_connect: "${wifi_fast_connect}"
+
+mdns:
+  disabled: false
+
+network:
+  enable_ipv6: ${ipv6_enable}
+
+captive_portal:
+    
+dashboard_import:
+  package_import_url: github://perosb/esphome-configs/nous-a1t.yaml
+
+web_server:
+  port: 80
+
+light:
+  - platform: status_led
+    id: led
+    restore_mode: RESTORE_DEFAULT_ON
+    pin:
+      number: GPIO13
+      inverted: true
+
+binary_sensor:
+  - platform: status
+    name: "${devicename} - Status"
+
+  # toggle relay on/off
+  - platform: gpio
+    pin:
+      number: GPIO00
+      mode: INPUT_PULLUP
+    id: "button_state"
+    on_press:
+      - switch.toggle: "button_switch"
+
+switch:
+  - platform: template
+    name: "${devicename} - Switch"
+    icon: mdi:power
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    id: "button_switch"
+    lambda: |-
+      if (id(relay).state) {
+        return true;
+      } else {
+        return false;
+      }
+    turn_on_action:
+      - switch.turn_on: relay
+      - light.turn_on: led
+    turn_off_action:
+      - switch.turn_off: relay
+      - light.turn_off: led
+  - platform: gpio
+    restore_mode: RESTORE_DEFAULT_ON
+    pin: GPIO14
+    id: relay
+
+sensor:
+  - platform: wifi_signal
+    name: "${devicename} - Wifi Signal"
+    update_interval: 60s
+    icon: mdi:wifi
+
+  - platform: uptime
+    name: "${devicename} - Uptime"
+    update_interval: 60s
+    icon: mdi:clock-outline
+
+  - platform: total_daily_energy
+    name: "${devicename} - Electric Consumption [kWh]"
+    power_id: "nous_a1t_watt"
+    filters:
+      # Multiplication factor from W to kW is 0.001
+      - multiply: 0.001
+    unit_of_measurement: kWh
+    icon: mdi:calendar-clock
+
+  - platform: adc
+    pin: VCC
+    name: "${devicename} - VCC Volt"
+    icon: mdi:flash-outline
+
+  - platform: hlw8012
+    sel_pin:
+      number: GPIO12
+      inverted: True
+    cf_pin: GPIO04
+    cf1_pin: GPIO05
+    change_mode_every: 4
+    current_resistor: ${current_res}
+    voltage_divider: ${voltage_div}
+    update_interval: 3s
+
+    current:
+      name: "${devicename} - Ampere"
+      unit_of_measurement: A
+      accuracy_decimals: 3
+      icon: mdi:current-ac
+
+    voltage:
+      name: "${devicename} - Voltage"
+      unit_of_measurement: V
+      accuracy_decimals: 1
+      icon: mdi:flash-outline
+
+    power:
+      name: "${devicename} - Power"
+      id: "nous_a1t_watt"
+      unit_of_measurement: W
+      icon: mdi:gauge
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: "${devicename} - IP Address"
+    ssid:
+      name: "${devicename} - Wi-Fi SSID"
+    bssid:
+      name: "${devicename} - Wi-Fi BSSID"
+  - platform: version
+    name: "${devicename} - ESPHome Version"
+    hide_timestamp: true
+
+time:
+  - platform: sntp
+    id: sntp_time
+  # Define the timezone of the device
+    timezone: "${timezone}"
+  # Change sync interval from default 5min to 6 hours (or as set in substitutions)
+    update_interval: ${sntp_update_interval}
+  # Set specific sntp servers to use
+    servers: 
+      - "${sntp_server_1}"
+  # Publish the time the device was last restarted
+    on_time_sync:
+      then:
+        # Update last restart time, but only once.
+        - if:
+            condition:
+              lambda: 'return id(device_last_restart).state == "";'
+            then:
+              - text_sensor.template.publish:
+                  id: device_last_restart
+                  state: !lambda 'return id(sntp_time).now().strftime("%a %d %b %Y - %I:%M:%S %p");'
