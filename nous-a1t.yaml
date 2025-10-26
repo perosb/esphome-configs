@@ -67,7 +67,7 @@ light:
 
 binary_sensor:
   - platform: status
-    name: "${devicename} - Status"
+    name: "Status"
 
   # toggle relay on/off
   - platform: gpio
@@ -80,7 +80,7 @@ binary_sensor:
 
 switch:
   - platform: template
-    name: "${devicename} - Switch"
+    name: "Switch"
     icon: mdi:power
     optimistic: true
     restore_mode: RESTORE_DEFAULT_ON
@@ -104,17 +104,17 @@ switch:
 
 sensor:
   - platform: wifi_signal
-    name: "${devicename} - Wifi Signal"
+    name: "Wifi Signal"
     update_interval: 60s
     icon: mdi:wifi
 
   - platform: uptime
-    name: "${devicename} - Uptime"
+    name: "Uptime"
     update_interval: 60s
     icon: mdi:clock-outline
 
   - platform: total_daily_energy
-    name: "${devicename} - Electric Consumption [kWh]"
+    name: "Electric Consumption [kWh]"
     power_id: "nous_a1t_watt"
     filters:
       # Multiplication factor from W to kW is 0.001
@@ -124,7 +124,7 @@ sensor:
 
   - platform: adc
     pin: VCC
-    name: "${devicename} - VCC Volt"
+    name: "VCC Volt"
     icon: mdi:flash-outline
 
   - platform: hlw8012
@@ -139,19 +139,19 @@ sensor:
     update_interval: 3s
 
     current:
-      name: "${devicename} - Ampere"
+      name: "Ampere"
       unit_of_measurement: A
       accuracy_decimals: 3
       icon: mdi:current-ac
 
     voltage:
-      name: "${devicename} - Voltage"
+      name: "Voltage"
       unit_of_measurement: V
       accuracy_decimals: 1
       icon: mdi:flash-outline
 
     power:
-      name: "${devicename} - Power"
+      name: "Power"
       id: "nous_a1t_watt"
       unit_of_measurement: W
       icon: mdi:gauge
@@ -159,13 +159,13 @@ sensor:
 text_sensor:
   - platform: wifi_info
     ip_address:
-      name: "${devicename} - IP Address"
+      name: "IP Address"
     ssid:
-      name: "${devicename} - Wi-Fi SSID"
+      name: "Wi-Fi SSID"
     bssid:
-      name: "${devicename} - Wi-Fi BSSID"
+      name: "Wi-Fi BSSID"
   - platform: version
-    name: "${devicename} - ESPHome Version"
+    name: "ESPHome Version"
     hide_timestamp: true
 
 time:
